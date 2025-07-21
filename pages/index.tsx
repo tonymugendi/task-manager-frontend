@@ -1,115 +1,86 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="min-h-screen bg-gray-50 text-gray-800">
+      {/* Hero Section */}
+      <section className="px-4 py-20 text-center bg-white shadow">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">Stay Organized. Get Things Done.</h1>
+        <p className="text-lg mb-6">A fullstack task manager built with Next.js & Node.js to help you manage productivity with ease.</p>
+        <div className="space-x-4">
+          <Button asChild><a href="/auth/login">View Demo</a></Button>
+          <Button variant="secondary" asChild><a href="https://github.com/your-repo">View on GitHub</a></Button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </section>
+
+      {/* Features Section */}
+      <section className="px-4 py-16 max-w-6xl mx-auto">
+        <h2 className="text-3xl font-semibold text-center mb-8">Features</h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            { title: "Task Management", desc: "Create, edit, and delete tasks easily." },
+            { title: "Set Priorities", desc: "Assign due dates and priorities to stay on track." },
+            { title: "Progress Tracking", desc: "Mark tasks as todo, in progress, or done." },
+            { title: "Filter & Sort", desc: "Quickly find and organize your tasks." },
+            { title: "User Roles", desc: "Secure authentication & role-based access." },
+            { title: "Responsive UI", desc: "Works beautifully on all devices." },
+            { title: "Dashboard Stats", desc: "Get insights on task submissions, overdue, and active users." },
+            { title: "Leaderboard", desc: "See the most active users by tasks completed or activity." },
+            { title: "Performance Metrics", desc: "Track average time to grade, completion rates, and more." }
+          ].map((f) => (
+            <Card key={f.title}>
+              <CardHeader>
+                <CardTitle>{f.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{f.desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* How it Works Section */}
+      <section className="px-4 py-16 bg-white text-center">
+        <h2 className="text-3xl font-semibold mb-4">How It Works</h2>
+        <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
+          {["Sign up & log in", "Create your tasks", "Track progress", "Complete & stay productive"].map((step, idx) => (
+            <Card key={idx} className="w-40">
+              <CardHeader>
+                <CardTitle>Step {idx + 1}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{step}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Tech Stack */}
+      <section className="px-4 py-16 bg-gray-100 text-center">
+        <h2 className="text-3xl font-semibold mb-4">Built With</h2>
+        <div className="flex flex-wrap justify-center gap-6">
+          {["Next.js", "Node.js", "Express", "PostgreSQL", "TailwindCSS", "Shadcn UI"].map((tech) => (
+            <Card key={tech} className="px-4 py-2">
+              <CardContent>{tech}</CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Demo Section */}
+      <section id="demo" className="px-4 py-16 text-center">
+        <h2 className="text-3xl font-semibold mb-4">See It In Action</h2>
+        <p className="mb-6">Check out the live demo or explore the code on GitHub.</p>
+        <Button asChild><a href="https://your-demo-link">Live Demo</a></Button>
+      </section>
+
+      {/* Footer */}
+      <footer className="px-4 py-6 text-center text-sm text-gray-500 bg-white">
+        © {new Date().getFullYear()} Tony Mugendi. All rights reserved.
       </footer>
-    </div>
+    </main>
   );
 }
