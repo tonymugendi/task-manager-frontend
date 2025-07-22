@@ -46,7 +46,7 @@ export default function LoginPage() {
       if (token) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
-        router.push("/tasks");
+        router.push("/dashboard");
       } else {
         setError("No token returned from server");
       }
@@ -84,7 +84,7 @@ export default function LoginPage() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Email" {...field} />
+                          <Input placeholder="Email" type="email" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -97,7 +97,7 @@ export default function LoginPage() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input placeholder="Password" {...field} />
+                          <Input placeholder="Password" type="password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
