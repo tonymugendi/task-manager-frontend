@@ -1,78 +1,88 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddTaskModal } from "@/components/tasks/add-task-modal";
+import withAuth from "@/components/auth/withAuth";
+import { useBoard } from "@/hooks/useBoard";
+import axios from "@/lib/axios";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { z } from "zod";
 
-// Mock data for the board
-const initialBoardData = {
-  columns: [
-    {
-      id: "backlog",
-      title: "Backlog",
-      tasks: [
-        { id: "task-1", title: "Design the new landing page" },
-        { id: "task-2", title: "Setup CI/CD pipeline" },
-      ],
-    },
-    {
-      id: "todo",
-      title: "To Do",
-      tasks: [
-        { id: "task-3", title: "Implement login functionality" },
-        { id: "task-4", title: "Write API documentation for auth" },
-        { id: "task-5", title: "Add route protection for dashboard" },
-      ],
-    },
-    {
-      id: "in-progress",
-      title: "In Progress",
-      tasks: [{ id: "task-6", title: "Develop Kanban board UI" }],
-    },
-    {
-      id: "done",
-      title: "Done",
-      tasks: [{ id: "task-7", title: "Initialize Next.js project" }],
-    },
-  ],
-};
+
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  status: z.string().min(1, "Status is required"),
+  description: z.string().optional(),
+  listId: z.string().min(1, "List is required"),
 });
 
 const BoardsPage = () => {
   const router = useRouter();
   const { boardId } = router.query;
-
-  const [boardData, setBoardData] = useState(initialBoardData);
+  const { board, isLoading, isError, mutate } = useBoard(boardId);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Format boardId for display (e.g., 'project-phoenix' -> 'Project Phoenix')
-  const boardName = typeof boardId === 'string'
-    ? boardId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-    : 'Board';
+  console.log({board});
 
-  const handleTaskAdd = (task: z.infer<typeof taskSchema>) => {
-    const newTask = { id: `task-${Date.now()}`, title: task.title };
+  // Use board name from API or format boardId as fallback
+  const boardName = board?.name || (
+    typeof boardId === 'string'
+      ? boardId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      : 'Board'
+  );
 
-    setBoardData((prevBoard) => {
-      const newBoard = { ...prevBoard };
-      const columnIndex = newBoard.columns.findIndex(
-        (col) => col.title === task.status
-      );
-
-      if (columnIndex !== -1) {
-        newBoard.columns[columnIndex].tasks.push(newTask);
-      }
-      return newBoard;
-    });
+  const handleTaskAdd = async (task: z.infer<typeof taskSchema>) => {
+    try {
+      await axios.post(`/boards/${boardId}/lists/${task.listId}/tasks`, {
+        title: task.title,
+        description: task.description || null, // Send null if empty
+        // Backend will handle position calculation
+      });
+      
+      // Refresh the board to show the new task
+      mutate();
+      
+      console.log("Task created successfully:", task.title);
+    } catch (error: any) {
+      console.error("Failed to create task:", error?.response?.data?.message || error.message);
+    }
   };
 
-  const statuses = boardData.columns.map((col) => col.title);
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading board...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Failed to load board. Please try again later.</p>
+          <Button onClick={() => mutate()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // No board data
+  if (!board) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-gray-500">Board not found.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6">
@@ -87,20 +97,24 @@ const BoardsPage = () => {
 
       {/* Kanban Board Columns */}
       <div className="flex gap-6 overflow-x-auto pb-4">
-        {boardData.columns.map((column) => (
-          <div key={column.id} className="w-72 flex-shrink-0">
+        {board.lists.map((list) => (
+          <div key={list.id} className="w-72 flex-shrink-0">
             <Card className="bg-gray-50/60">
               <CardHeader className="p-4">
-                <CardTitle className="text-base font-semibold">{column.title}</CardTitle>
+                <CardTitle className="text-base font-semibold">{list.name}</CardTitle>
               </CardHeader>
               <CardContent className="p-4 pt-0 flex flex-col gap-3">
-                {column.tasks.map((task) => (
-                  <Card key={task.id} className="bg-white shadow-sm hover:shadow-md transition-shadow">
-                    <CardContent className="p-3">
-                      <p className="text-sm">{task.title}</p>
-                    </CardContent>
-                  </Card>
-                ))}
+                {list.tasks && list.tasks.length > 0 ? (
+                  list.tasks.map((task) => (
+                    <Card key={task.id} className="bg-white shadow-sm hover:shadow-md transition-shadow">
+                      <CardContent className="p-3">
+                        <p className="text-sm">{task.title}</p>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <p className="text-xs text-gray-400 text-center py-4">No tasks yet</p>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -111,10 +125,10 @@ const BoardsPage = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onTaskAdd={handleTaskAdd}
-        statuses={statuses}
+        lists={board.lists}
       />
     </div>
   );
 };
 
-export default BoardsPage;
+export default withAuth(BoardsPage);

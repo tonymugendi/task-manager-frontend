@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateBoardModal } from "@/components/boards/create-board-modal";
+import withAuth from "@/components/auth/withAuth";
 import axios from "@/lib/axios";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -30,7 +31,6 @@ const BoardsListPage = () => {
     }
   };
 
-  console.log({boards});
 
   return (
     <div className="p-4 md:p-6">
@@ -83,4 +83,4 @@ const BoardsListPage = () => {
   );
 };
 
-export default BoardsListPage;
+export default withAuth(BoardsListPage);
