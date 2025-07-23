@@ -137,3 +137,5 @@ export default function LoginPage() {
     </main>
   );
 }
+
+LoginPage.noLayout = true;

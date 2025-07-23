@@ -66,3 +66,5 @@ export default function RegisterPage() {
     </main>
   );
 }
+
+RegisterPage.noLayout = true;
