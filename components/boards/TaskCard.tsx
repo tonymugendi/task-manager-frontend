@@ -5,8 +5,11 @@ import {
   Calendar, 
   AlertCircle, 
   CheckCircle2, 
-  Circle 
+  Circle,
+  GripVertical
 } from "lucide-react";
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Task {
   id: string;
@@ -22,9 +25,28 @@ interface TaskCardProps {
     avatar: string;
     color: string;
   };
+  listId: string;
 }
 
-export function TaskCard({ task, priority, assignee }: TaskCardProps) {
+export function TaskCard({ task, priority, assignee, listId }: TaskCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    isDragging,
+  } = useDraggable({
+    id: task.id,
+    data: {
+      type: 'task',
+      task,
+      listId,
+    },
+  });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+  };
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'border-l-red-500 bg-red-50';
@@ -46,13 +68,28 @@ export function TaskCard({ task, priority, assignee }: TaskCardProps) {
   const priorityColor = getPriorityColor(priority);
 
   return (
-    <Card className={`${priorityColor} border-l-4 hover:shadow-md transition-all duration-200 cursor-pointer group`}>
+    <Card 
+      ref={setNodeRef} 
+      style={style}
+      className={`${priorityColor} border-l-4 hover:shadow-md transition-all duration-200 cursor-pointer group ${
+        isDragging ? 'opacity-50 shadow-2xl scale-105 rotate-2' : ''
+      }`}
+      {...attributes}
+    >
       <CardContent className="p-4">
         <div className="space-y-3">
           <div className="flex items-start justify-between">
-            <h4 className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
-              {task.title}
-            </h4>
+            <div className="flex items-start gap-2 flex-1">
+              <div 
+                {...listeners}
+                className="opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded"
+              >
+                <GripVertical className="w-3 h-3 text-gray-400" />
+              </div>
+              <h4 className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors flex-1">
+                {task.title}
+              </h4>
+            </div>
             <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-6 w-6">
               <MoreVertical className="w-3 h-3" />
             </Button>

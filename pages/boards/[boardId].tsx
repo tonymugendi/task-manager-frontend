@@ -11,6 +11,18 @@ import Link from "next/link";
 import { BoardHeader } from "@/components/boards/BoardHeader";
 import { BoardStats } from "@/components/boards/BoardStats";
 import { KanbanColumn } from "@/components/boards/KanbanColumn";
+import { 
+  DndContext, 
+  DragEndEvent, 
+  DragOverEvent, 
+  DragOverlay, 
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners
+} from '@dnd-kit/core';
+import { TaskCard } from "@/components/boards/TaskCard";
 
 
 
@@ -25,6 +37,16 @@ const BoardsPage = () => {
   const { boardId } = router.query;
   const { board, isLoading, isError, mutate } = useBoard(boardId);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTask, setActiveTask] = useState<any>(null);
+
+  // Configure drag sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   console.log({board});
 
@@ -94,6 +116,52 @@ const BoardsPage = () => {
     } catch (error: any) {
       console.error("Failed to create task:", error?.response?.data?.message || error.message);
     }
+  };
+
+  // Drag event handlers
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    if (active.data.current?.type === 'task') {
+      setActiveTask(active.data.current.task);
+    }
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveTask(null);
+
+    if (!over) return;
+
+    const activeTaskId = active.id as string;
+    const activeListId = active.data.current?.listId;
+    const overListId = over.id as string;
+
+    // If dropped on the same list, no action needed for now
+    // In a real app, you might want to handle reordering within the same list
+    if (activeListId === overListId) {
+      console.log('Task dropped in same list - reordering not implemented yet');
+      return;
+    }
+
+    try {
+      // Move task to new list
+      await axios.patch(`/boards/${boardId}/tasks/${activeTaskId}/move`, {
+        newListId: overListId,
+        // You might want to include position for ordering
+      });
+      
+      // Refresh the board to show the updated task positions
+      mutate();
+      
+      console.log(`Task ${activeTaskId} moved from ${activeListId} to ${overListId}`);
+    } catch (error: any) {
+      console.error("Failed to move task:", error?.response?.data?.message || error.message);
+      // You might want to show a toast notification here
+    }
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    // Handle drag over events if needed for visual feedback
   };
 
   // Loading state
@@ -203,19 +271,41 @@ const BoardsPage = () => {
         {/* Board Stats Component */}
         <BoardStats stats={stats} />
 
-        {/* Enhanced Kanban Board */}
-        <div className="flex gap-6 overflow-x-auto pb-6">
-          {board.lists.map((list, listIndex) => (
-            <KanbanColumn
-              key={list.id}
-              list={list}
-              listIndex={listIndex}
-              onAddTask={() => setIsModalOpen(true)}
-              getTaskPriority={getTaskPriority}
-              getTaskAssignee={getTaskAssignee}
-            />
-          ))}
-        </div>
+        {/* Enhanced Kanban Board with Drag & Drop */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="flex gap-6 overflow-x-auto pb-6">
+            {board.lists.map((list, listIndex) => (
+              <KanbanColumn
+                key={list.id}
+                list={list}
+                listIndex={listIndex}
+                onAddTask={() => setIsModalOpen(true)}
+                getTaskPriority={getTaskPriority}
+                getTaskAssignee={getTaskAssignee}
+              />
+            ))}
+          </div>
+          
+          {/* Drag Overlay */}
+          <DragOverlay>
+            {activeTask ? (
+              <div className="rotate-6 opacity-90">
+                <TaskCard
+                  task={activeTask}
+                  priority={getTaskPriority(activeTask.id)}
+                  assignee={getTaskAssignee(activeTask.id)}
+                  listId="" // Not needed for overlay
+                />
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
 
         <AddTaskModal
           isOpen={isModalOpen}
