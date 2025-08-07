@@ -6,6 +6,19 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Project-9333EA?style=flat-square&logo=star)](https://task-manager-frontend-liard-rho.vercel.app/)
+
+## 🌐 Live Demo
+
+**[👉 Try Task Manager Pro Live](https://task-manager-frontend-liard-rho.vercel.app/)**
+
+### Demo Credentials
+```
+Email: demo@taskmanager.com
+Password: demo123
+```
+
+> 💡 **Tip**: Create your own account or use the demo credentials above to explore all features including the Kanban board, task management, and team collaboration tools.
 
 ## 📋 Overview
 
@@ -60,6 +73,22 @@ Task Manager Pro is a comprehensive project management application that demonstr
 - **Code Quality**: ESLint + Prettier
 - **Version Control**: Git
 - **Deployment**: Vercel (frontend) + Railway (backend)
+
+## 📸 Screenshots
+
+### Kanban Board
+![Kanban Board](./public/screenshots/kanban.png)
+*Interactive drag & drop Kanban board with task management*
+
+![Enhanced Kanban Board](./public/screenshots/new-kanban.png)
+*Advanced Kanban features with team collaboration*
+
+### Authentication
+![Login Page](./public/screenshots/login.png)
+*Modern login interface with glass-morphism design*
+
+![Register Page](./public/screenshots/register.png)
+*Professional registration form with validation*
 
 ## 🎪 Feature Showcase
 
@@ -266,6 +295,6 @@ Built by **Tony Mugendi** as a portfolio showcase demonstrating:
 
 ⭐ **Star this repository** if you found it helpful or interesting!
 
-📧 **Contact**: [your-email@example.com](mailto:your-email@example.com)
-🔗 **Portfolio**: [your-portfolio-url.com](https://your-portfolio-url.com)
-💼 **LinkedIn**: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
+📧 **Contact**: [your-email@example.com](mailto:mugendi.tony26@gmail.com)
+🔗 **Portfolio**: [your-portfolio-url.com](https://mugendi.dev)
+💼 **LinkedIn**: [Your LinkedIn Profile](https://linkedin.com/in/tonymugendi)

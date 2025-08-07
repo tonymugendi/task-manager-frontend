@@ -6,7 +6,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="max-w-full h-full">
+      <main className="w-full">
         <div className="flex bg-gray-50 justify-between items-center max-w-full">
           <SidebarTrigger className="size-8"/>
           <TopMenuBar />

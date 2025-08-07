@@ -51,7 +51,7 @@ export default function LoginPage() {
       if (token) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
-        router.push("/dashboard");
+        router.push("/boards");
       } else {
         setError("No token returned from server");
       }

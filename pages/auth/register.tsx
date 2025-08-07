@@ -61,7 +61,7 @@ export default function RegisterPage() {
       if (token) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
-        router.push("/dashboard");
+        router.push("/boards");
       } else {
         setError("Registration successful! Please sign in.");
         router.push("/auth/login");
