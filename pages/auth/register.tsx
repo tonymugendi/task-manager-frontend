@@ -56,8 +56,8 @@ export default function RegisterPage() {
         password: values.password,
       });
       console.log(res.data);
-      const token = res.data.token;
-      const user = res.data.user;
+      const token = res.data.data.token;
+      const user = res.data.data.user;
       if (token) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
